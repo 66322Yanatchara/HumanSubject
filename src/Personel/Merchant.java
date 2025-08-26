@@ -1,14 +1,19 @@
 package Personel;
 
-public class Merchant {
+public class Merchant extends People {
+
+    @Override
     public int payTax(int income) {
-        if (income <= 150000) {
-            // รายได้ไม่เกิน 150,000 เสียภาษี 1000 บาท
-            return 1000;
-        } else {
-            // รายได้เกิน 150,000 เสียภาษี 1000 + 5% ของรายได้ส่วนเกิน
-            return 1000 + (int) ((income - 150000) * 0.05);
-        }
+        // สมมติว่า Merchant เสียภาษี 10%
+        return (int)(income * 0.10);
     }
 
+    @Override
+    public int getWelfare(String type) {
+        // สมมติ Merchant มีแต่สวัสดิการตกงาน 5000
+        if (type.equalsIgnoreCase("ตกงาน")) {
+            return 5000;
+        }
+        return 0;
+    }
 }
