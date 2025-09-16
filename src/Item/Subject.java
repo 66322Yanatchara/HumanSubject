@@ -3,31 +3,33 @@ package Item;
 public class Subject {
     private String id;
     private String name;
-    private int unit; // จำนวนหน่วยกิต
+    private int units;
 
-    // Constructor
-    public Subject(String id, String name, int unit) {
+    public Subject() {}
+
+    public Subject(String id, String name, int units) {
         this.id = id;
         this.name = name;
-        this.unit = unit;
+        this.units = units;
     }
 
-    // Getter
-    public String getId() {
-        return id;
-    }
+    // getters
+    public String getId()    { return id; }
+    public String getName()  { return name; }
+    public int getUnits()    { return units; }
 
-    public String getName() {
-        return name;
-    }
+    // (รองรับโค้ดเดิมที่เรียก getUnit())
+    public int getUnit()     { return units; }
 
-    public int getUnit() {
-        return unit;
-    }
+    // setters (ตามสไตล์ที่อาจารย์ใช้ในคลาส)
+    public void setId(String id)       { this.id = id; }
+    public void setName(String name)   { this.name = name; }
+    public void setUnits(int units)    { this.units = units; }
+    // (รองรับโค้ดเดิมที่เรียก setUnit())
+    public void setUnit(int units)     { this.units = units; }
 
-    // (Optional) toString สำหรับ debug
     @Override
     public String toString() {
-        return id + " - " + name + " (" + unit + " หน่วยกิต)";
+        return id + " - " + name + " (" + units + " หน่วยกิต)";
     }
 }

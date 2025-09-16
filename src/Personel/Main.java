@@ -1,101 +1,91 @@
 package Personel;
 
+import Item.Subject;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
 
-        // ===== รับข้อมูลนักศึกษา =====
+        // ===== สร้างออบเจ็กต์นักศึกษา =====
+        Student std1 = new Student();
+
         System.out.print("กรอกรหัสนักศึกษา: ");
-        String studentId = sc.nextLine().trim();
+        std1.setId(scan.nextLine().trim());
 
         System.out.print("กรอกชื่อนักศึกษา: ");
-        String studentName = sc.nextLine().trim();
+        std1.setName(scan.nextLine().trim());
 
         System.out.print("กรอกหน่วยกิตที่มีอยู่แล้ว: ");
-        int currentUnits = readNonNegativeInt(sc);
+        int cur = readNonNegativeInt(scan);
+        std1.setCnUnit(cur);
 
-        System.out.println("\n===== สรุปข้อมูลเบื้องต้น =====");
-        System.out.println("รหัสนักศึกษา: " + studentId);
-        System.out.println("ชื่อนักศึกษา: " + studentName);
-        System.out.println("หน่วยกิตปัจจุบัน: " + currentUnits);
-
-        // ถ้าเกิน/เท่ากับ 21 แล้ว ลงเพิ่มไม่ได้
-        if (currentUnits >= 21) {
-            System.out.println("\n❌ ไม่สามารถลงทะเบียนเพิ่มได้ (หน่วยกิตถึง/เกิน 21 แล้ว)");
-            sc.close();
+        if (std1.getCnUnit() >= 21) {
+            System.out.println("❌ หน่วยกิตถึง/เกิน 21 แล้ว ไม่สามารถลงเพิ่มได้");
             return;
         }
 
-        // ===== วนลูปลงทะเบียนรายวิชาใหม่ =====
+        // ===== วนลูปเพิ่มรายวิชา =====
         while (true) {
-            System.out.println("\n===== ลงทะเบียนรายวิชาใหม่ =====");
+            int remaining = 21 - std1.getCnUnit();
+            System.out.println("\nหน่วยกิตที่ยังเพิ่มได้: " + remaining);
+
+            Subject sub = new Subject();
+
             System.out.print("กรอกรหัสวิชา: ");
-            String subId = sc.nextLine().trim();
+            sub.setId(scan.nextLine().trim());
 
             System.out.print("กรอกชื่อวิชา: ");
-            String subName = sc.nextLine().trim();
+            sub.setName(scan.nextLine().trim());
 
             System.out.print("กรอกหน่วยกิตของวิชา: ");
-            int addUnits = readPositiveInt(sc);
+            sub.setUnits(readPositiveInt(scan));
 
-            int newTotal = currentUnits + addUnits;
-
-            System.out.println("\n===== ผลการลงทะเบียน =====");
-            if (newTotal <= 21) {
-                System.out.println("✅ ลงทะเบียนสำเร็จ");
-                System.out.println("วิชา: " + subId + " - " + subName + " (" + addUnits + " หน่วยกิต)");
-                System.out.println("หน่วยกิตเดิม: " + currentUnits);
-                System.out.println("หน่วยกิตที่เพิ่มมา: " + addUnits);
-                System.out.println("รวมหน่วยกิตใหม่: " + newTotal + " (ไม่เกิน 21)");
-                currentUnits = newTotal; // update หน่วยกิต
+            if (std1.addSubject(sub)) {
+                System.out.println("✅ ลงทะเบียนสำเร็จ: " + sub);
+                System.out.println("รวมหน่วยกิตใหม่: " + std1.getCnUnit() + "/21");
             } else {
-                System.out.println("❌ ไม่สามารถลงทะเบียนได้ (จะกลายเป็น " + newTotal + " หน่วยกิต ซึ่งเกิน 21)");
-                System.out.println("หน่วยกิตเดิมยังคงเป็น: " + currentUnits);
-                break; // จบการลงทะเบียนเพราะเกิน 21
+                System.out.println("❌ เกินลิมิต: ถ้าเพิ่ม " + sub.getUnits() +
+                        " จะเป็น " + (std1.getCnUnit() + sub.getUnits()) + " (>21)");
             }
 
-            // ถามต่อว่าจะเพิ่มอีกไหม
-            System.out.print("\nต้องการเพิ่มรายวิชาอีกหรือไม่? (Y/N): ");
-            String ans = sc.nextLine().trim();
-            if (!ans.equalsIgnoreCase("Y")) {
-                break; // ออกจากลูป
+            if (std1.getCnUnit() == 21) {
+                System.out.println("หน่วยกิตครบ 21 พอดี ✅");
+                break;
             }
+
+            System.out.print("Continue? (Y/N): ");
+            String ans = scan.nextLine().trim();
+            if (!ans.equalsIgnoreCase("Y")) break;
         }
 
+        // ===== สรุป =====
         System.out.println("\n=== สรุปสุดท้าย ===");
-        System.out.println("รหัสนักศึกษา: " + studentId);
-        System.out.println("ชื่อ: " + studentName);
-        System.out.println("รวมหน่วยกิตสุดท้าย: " + currentUnits);
-
-        sc.close();
+        System.out.println("ID : " + std1.getId());
+        System.out.println("Name : " + std1.getName());
+        System.out.println("Subjects (" + std1.getSubjects().size() + "):");
+        for (Subject s : std1.getSubjects()) {
+            System.out.println(" - " + s);
+        }
+        System.out.println("Total Units: " + std1.getCnUnit() + "/21");
     }
 
-    // อ่านจำนวนเต็มที่ไม่ติดลบ
     private static int readNonNegativeInt(Scanner sc) {
         while (true) {
             if (sc.hasNextInt()) {
-                int val = sc.nextInt();
-                sc.nextLine(); // เคลียร์ buffer
-                if (val >= 0) return val;
-            } else {
-                sc.nextLine();
-            }
+                int v = sc.nextInt(); sc.nextLine();
+                if (v >= 0) return v;
+            } else sc.nextLine();
             System.out.print("กรอกเป็นจำนวนเต็มที่ไม่ติดลบอีกครั้ง: ");
         }
     }
 
-    // อ่านจำนวนเต็มบวก (> 0)
     private static int readPositiveInt(Scanner sc) {
         while (true) {
             if (sc.hasNextInt()) {
-                int val = sc.nextInt();
-                sc.nextLine();
-                if (val > 0) return val;
-            } else {
-                sc.nextLine();
-            }
+                int v = sc.nextInt(); sc.nextLine();
+                if (v > 0) return v;
+            } else sc.nextLine();
             System.out.print("กรอกเป็นจำนวนเต็มบวก (>0) อีกครั้ง: ");
         }
     }
